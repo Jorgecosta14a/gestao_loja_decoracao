@@ -1,36 +1,33 @@
 package dao;
 
-import database.DBConnection;
 import model.Produto;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import java.util.List;
 
 public class ProdutoDAO {
 
-    public Produto obterProdutoPorId(int idProduto) {
-        String sql = "SELECT id_produto, nome, preco, quantidade_stock FROM produto WHERE id_produto = ?";
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("GestaoLojaDecoracaoPU");
+    private EntityManager em = emf.createEntityManager();
 
-        // O teu DBConnection.getConnection() é chamado aqui!
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+    public void inserirProduto(Produto produto) {
+        em.getTransaction().begin();
+        em.persist(produto);
+        em.getTransaction().commit();
+    }
 
-            stmt.setInt(1, idProduto);
-            ResultSet rs = stmt.executeQuery();
+    public Produto buscarProdutoPorId(int id) {
+        return em.find(Produto.class, id);
+    }
 
-            if (rs.next()) {
-                return new Produto(
-                        rs.getInt("id_produto"),
-                        rs.getString("nome"),
-                        rs.getDouble("preco"),
-                        rs.getInt("quantidade_stock")
-                );
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao procurar produto na Base de Dados: " + e.getMessage());
-        }
-        return null; // Retorna nulo se o produto não existir na BD
+    public List<Produto> buscarTodosProdutos() {
+        return em.createQuery("FROM Produto", Produto.class).getResultList();
+    }
+
+    public void atualizarProduto(Produto produto) {
+        em.getTransaction().begin();
+        em.merge(produto);
+        em.getTransaction().commit();
     }
 }

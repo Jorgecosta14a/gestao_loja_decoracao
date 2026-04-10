@@ -1,43 +1,52 @@
 package dao;
 
-import database.DBConnection;
 import model.Cliente;
-
-import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import java.util.List;
 
 public class ClienteDAO {
 
-    public List<Cliente> getAllClientes() {
+    private EntityManagerFactory emf = Persistence.createEntityManagerFactory("GestaoLojaDecoracaoPU");
+    private EntityManager em = emf.createEntityManager();
 
-        List<Cliente> clientes = new ArrayList<>();
+    public void inserirCliente(Cliente cliente) {
+        em.getTransaction().begin();
+        em.persist(cliente);
+        em.getTransaction().commit();
+    }
 
+    public Cliente buscarClientePorId(int id) {
+        return em.find(Cliente.class, id);
+    }
+
+    public List<Cliente> buscarTodosClientes() {
+        return em.createQuery("FROM Cliente", Cliente.class).getResultList();
+    }
+
+    public Cliente buscarPorNif(String nif) {
         try {
-            Connection conn = DBConnection.getConnection();
-
-            Statement stmt = conn.createStatement();
-
-            ResultSet rs = stmt.executeQuery("SELECT * FROM cliente");
-
-            while (rs.next()) {
-
-                int id = rs.getInt("id_cliente");
-                String nome = rs.getString("nome");
-                String contacto = rs.getString("contacto");
-                String nif = rs.getString("nif");
-
-                Cliente cliente = new Cliente(id, nome, contacto, nif);
-
-                clientes.add(cliente);
-            }
-
+            return em.createQuery("SELECT c FROM Cliente c WHERE c.nif = :nif", Cliente.class)
+                    .setParameter("nif", nif)
+                    .getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
+    }
 
-        return clientes;
+    public void atualizarCliente(Cliente cliente) {
+        em.getTransaction().begin();
+        em.merge(cliente);
+        em.getTransaction().commit();
+    }
+
+    public void removerCliente(int id) {
+        Cliente cliente = em.find(Cliente.class, id);
+        if (cliente != null) {
+            em.getTransaction().begin();
+            em.remove(cliente);
+            em.getTransaction().commit();
+        }
     }
 }

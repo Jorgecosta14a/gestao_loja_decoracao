@@ -1,34 +1,44 @@
 package bll;
 
 import dao.ProdutoDAO;
+import dao.VendaDAO;
+import model.Cliente;
+import model.LinhaVenda;
 import model.Produto;
+import model.Venda;
+import java.util.List;
 
 public class VendaService {
 
-    private ProdutoDAO produtoDAO;
+    private ProdutoDAO produtoDAO = new ProdutoDAO();
+    private VendaDAO vendaDAO = new VendaDAO();
 
-    public VendaService() {
-        this.produtoDAO = new ProdutoDAO();
+    public String realizarVenda(Cliente cliente, Produto produto, int quantidade) {
+        if (produto.getQuantidadeStock() < quantidade) {
+            return "❌ Erro: Stock insuficiente (" + produto.getQuantidadeStock() + " disponíveis).";
+        }
+
+        Venda venda = new Venda(cliente);
+        venda.adicionarProduto(produto, quantidade);
+
+        produto.setQuantidadeStock(produto.getQuantidadeStock() - quantidade);
+        produtoDAO.atualizarProduto(produto);
+
+        vendaDAO.salvarVenda(venda);
+        return "✅ Venda nº " + venda.getId() + " realizada com sucesso!";
     }
 
-    public void registarVenda(int idProduto, int quantidadeComprada, int idCliente, int idFuncionario) {
-        System.out.println("\n--- A processar pedido de venda ---");
-
-        Produto produto = produtoDAO.obterProdutoPorId(idProduto);
-
-        if (produto == null) {
-            System.out.println("❌ ERRO (BLL): O produto com o ID " + idProduto + " não existe na base de dados.");
-            return;
+    public void exibirRelatorioVendas() {
+        List<Venda> vendas = vendaDAO.buscarTodas();
+        System.out.println("\n======= RELATÓRIO DE VENDAS =======");
+        for (Venda v : vendas) {
+            System.out.println("Venda ID: " + v.getId() + " | Cliente: " + v.getCliente().getNome());
+            for (LinhaVenda linha : v.getLinhasVenda()) {
+                System.out.println("   -> Produto: " + linha.getProduto().getNome() +
+                        " | Qtd: " + linha.getQuantidade() +
+                        " | Preço Un: " + linha.getPrecoUnitario() + "€");
+            }
+            System.out.println("-----------------------------------");
         }
-
-        System.out.println("Produto encontrado: " + produto.getNome() + " | Stock atual: " + produto.getQuantidadeStock());
-
-        if (produto.getQuantidadeStock() < quantidadeComprada) {
-            System.out.println("❌ ERRO (BLL): Stock insuficiente! Tentou vender " + quantidadeComprada + " unidades, mas só existem " + produto.getQuantidadeStock() + ".");
-            return;
-        }
-
-
-        System.out.println("✅ SUCESSO (BLL): Stock validado. A enviar ordem para a DAL gravar a venda...");
     }
 }
