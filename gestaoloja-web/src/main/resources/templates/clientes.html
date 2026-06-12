@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clientes</title>
+    <link rel="stylesheet" th:href="@{/css/web.css}">
+    <style>
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover,
+        tbody tr.selected-row {
+            background-color: #f1f0eb;
+        }
+
+        .danger-action,
+        .cancel-action {
+            width: 100%;
+            margin-top: 10px;
+            border: 0;
+            border-radius: 4px;
+            padding: 10px 15px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .danger-action {
+            background-color: #d9534f;
+        }
+
+        .danger-action:hover {
+            background-color: #c9302c;
+        }
+
+        .cancel-action {
+            background-color: #999;
+        }
+
+        .purchase-history {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid #e7e5df;
+        }
+
+        .purchase-history h3 {
+            margin: 0 0 12px;
+            font-size: 17px;
+        }
+
+        .purchase-history table {
+            margin-bottom: 0;
+        }
+
+        .purchase-history th,
+        .purchase-history td {
+            padding: 10px 6px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">Nordic Curator<span>Gestão de Clientes</span></div>
+        <nav>
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/vendas}">Registar venda</a>
+            <a class="active" th:href="@{/clientes}">Clientes</a>
+            <a th:href="@{/produtos}">Produtos e stock</a>
+            <a th:href="@{/garantias}">Garantias</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <header class="topbar">
+            <input type="search" placeholder="Pesquisar cliente...">
+            <a th:href="@{/vendas}" class="dark-action">Nova venda</a>
+        </header>
+
+        <section class="page-title">
+            <span>Gestão / Clientes</span>
+            <h1>Clientes</h1>
+            <p>Registo de clientes para associar vendas, faturas e pedidos de garantia.</p>
+        </section>
+
+        <section class="split">
+            <article class="card table-card">
+                <div class="section-head">
+                    <h2>Clientes registados</h2>
+                    <span th:text="${#lists.size(clientes)} + ' clientes'">0 clientes</span>
+                </div>
+                <p class="ok" th:if="${mensagem}" th:text="${mensagem}"></p>
+                <p class="error" th:if="${erro}" th:text="${erro}"></p>
+                <table>
+                    <thead>
+                    <tr><th>ID</th><th>Nome</th><th>Contacto</th><th>NIF</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="cliente : ${clientes}"
+                        style="cursor: pointer;"
+                        title="Clique para editar, eliminar ou consultar compras"
+                        th:classappend="${clienteSelecionado != null and clienteSelecionado.id == cliente.id} ? 'selected-row'"
+                        th:attr="data-url=@{/clientes(clienteId=${cliente.id})}"
+                        onclick="window.location=this.getAttribute('data-url')">
+                        <td th:text="'#' + ${cliente.id}">#1</td>
+                        <td>
+                            <strong th:text="${cliente.nome}">Cliente</strong>
+                            <small class="muted" th:if="${cliente.nif == '999999990'}">Usado em vendas ao balcão</small>
+                        </td>
+                        <td th:text="${#strings.isEmpty(cliente.contacto) ? '-' : cliente.contacto}">Contacto</td>
+                        <td th:text="${#strings.isEmpty(cliente.nif) ? '-' : cliente.nif}">NIF</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <article class="card form-card">
+                <h2 id="form-title" th:text="${clienteSelecionado != null ? 'Atualizar cliente' : 'Novo cliente'}">Novo cliente</h2>
+                <form th:action="@{/clientes}" method="post">
+                    <input type="hidden" name="id_cliente" id="id_cliente"
+                           th:value="${clienteSelecionado != null ? clienteSelecionado.id : 0}">
+                    <label>Nome
+                        <input name="nome" id="input_nome" required
+                               th:value="${clienteSelecionado != null ? clienteSelecionado.nome : ''}">
+                    </label>
+                    <label>Contacto
+                        <input name="contacto" id="input_contacto"
+                               th:value="${clienteSelecionado != null ? clienteSelecionado.contacto : ''}">
+                    </label>
+                    <label>NIF
+                        <input name="nif" id="input_nif" maxlength="20"
+                               th:value="${clienteSelecionado != null ? clienteSelecionado.nif : ''}">
+                    </label>
+                    <button type="submit" id="btn_guardar" class="primary-action"
+                            th:text="${clienteSelecionado != null ? 'Atualizar' : 'Guardar cliente'}">Guardar cliente</button>
+                    <button type="button" id="btn_cancelar" class="cancel-action"
+                            th:if="${clienteSelecionado != null}"
+                            onclick="window.location='/clientes'">Cancelar seleção</button>
+                </form>
+
+                <form id="form_eliminar" th:if="${clienteSelecionado != null}"
+                      th:action="@{/clientes/eliminar}" method="post">
+                    <input type="hidden" name="id_cliente_eliminar" id="id_cliente_eliminar"
+                           th:value="${clienteSelecionado.id}">
+                    <button type="submit" class="danger-action" onclick="return confirm('Tem a certeza que deseja eliminar este cliente? Esta ação não pode ser desfeita.');">Delete</button>
+                </form>
+
+                <section class="purchase-history" th:if="${clienteSelecionado != null}">
+                    <h3>Histórico de Compras</h3>
+                    <p class="muted" th:if="${#lists.isEmpty(vendasCliente)}">Este cliente ainda não tem compras registadas.</p>
+                    <table th:if="${!#lists.isEmpty(vendasCliente)}">
+                        <thead>
+                        <tr><th>ID</th><th>Data</th><th>Total</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="venda : ${vendasCliente}">
+                            <td th:text="'#' + ${venda.id}">#1</td>
+                            <td th:text="${#temporals.format(venda.dataVenda, 'dd/MM/yyyy HH:mm')}">data</td>
+                            <td th:text="${#numbers.formatDecimal(venda.total, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</td>
+                            <td>
+                                <a class="table-action" th:href="@{/fatura/{id}(id=${venda.id})}" target="_blank" rel="noopener">Ver Fatura</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

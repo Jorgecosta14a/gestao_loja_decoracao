@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Fatura #' + ${venda.id}">Fatura</title>
+    <link rel="stylesheet" th:href="@{/css/web.css}">
+</head>
+<body class="invoice-page">
+<main class="print-invoice">
+    <header class="print-invoice-head">
+        <div>
+            <strong>Nordic Curator</strong>
+            <span>Loja Principal</span>
+            <small>Gestão de mobiliário e decoração</small>
+        </div>
+        <button type="button" class="dark-action no-print" onclick="window.print()">Imprimir</button>
+    </header>
+
+    <section class="invoice-meta">
+        <div>
+            <span>Fatura</span>
+            <strong th:text="'#' + ${venda.id}">#1</strong>
+        </div>
+        <div>
+            <span>Data</span>
+            <strong th:text="${#temporals.format(venda.dataVenda, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</strong>
+        </div>
+    </section>
+
+    <section class="invoice-client">
+        <h1>Dados do cliente</h1>
+        <p>
+            <strong th:text="${venda.cliente.nome}">Cliente</strong>
+            <span th:text="${#strings.isEmpty(venda.cliente.contacto) ? 'Contacto: -' : 'Contacto: ' + venda.cliente.contacto}">Contacto</span>
+            <span th:text="${#strings.isEmpty(venda.cliente.nif) ? 'NIF: -' : 'NIF: ' + venda.cliente.nif}">NIF</span>
+        </p>
+    </section>
+
+    <section>
+        <h1>Produtos</h1>
+        <table class="print-invoice-table">
+            <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Preço unitário</th>
+                <th>Subtotal</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="linha : ${venda.linhasVenda}">
+                <td th:text="${linha.produto.nome}">Produto</td>
+                <td th:text="${linha.quantidade}">1</td>
+                <td th:text="${#numbers.formatDecimal(linha.precoUnitario, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</td>
+                <td th:text="${#numbers.formatDecimal(linha.quantidade * linha.precoUnitario, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="print-invoice-total">
+        <span>Total</span>
+        <strong th:text="${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</strong>
+    </section>
+</main>
+</body>
+</html>

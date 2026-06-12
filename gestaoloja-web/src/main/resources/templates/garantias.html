@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Garantias</title>
+    <link rel="stylesheet" th:href="@{/css/web.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">Nordic Curator<span>Gestão de Curadoria</span></div>
+        <nav>
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/vendas}">Registar venda</a>
+            <a th:href="@{/clientes}">Clientes</a>
+            <a th:href="@{/produtos}">Produtos e stock</a>
+            <a class="active" th:href="@{/garantias}">Garantias</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section class="page-title">
+            <span>Gestão / Garantias</span>
+            <h1>Gestão de Garantias</h1>
+            <p>Monitorização e acompanhamento dos processos de reparação e devolução.</p>
+        </section>
+
+        <section class="cards-grid">
+            <article class="card"><p>Em análise</p><strong th:text="${emAnalise}">0</strong></article>
+            <article class="card warm"><p>Aprovadas</p><strong th:text="${aprovadas}">0</strong></article>
+            <article class="card warning"><p>Rejeitadas</p><strong th:text="${rejeitadas}">0</strong></article>
+        </section>
+
+        <section class="split">
+            <article class="card table-card">
+                <div class="section-head">
+                    <h2>Pedidos recentes</h2>
+                    <span th:text="${#lists.size(garantias)} + ' pedidos'">0 pedidos</span>
+                </div>
+                <p class="ok" th:if="${mensagem}" th:text="${mensagem}"></p>
+                <p class="error" th:if="${erro}" th:text="${erro}"></p>
+                <table>
+                    <thead>
+                    <tr><th>ID</th><th>Cliente</th><th>Venda</th><th>Motivo</th><th>Estado</th><th>Ação</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="garantia : ${garantias}">
+                        <td th:text="'#' + ${garantia.id}">#1</td>
+                        <td th:text="${garantia.cliente.nome}">Cliente</td>
+                        <td th:text="'#' + ${garantia.venda.id}">#1</td>
+                        <td th:text="${garantia.motivo}">Motivo</td>
+                        <td><span class="pill" th:text="${garantia.estado.descricao}">Estado</span></td>
+                        <td class="actions">
+                            <form th:if="${garantia.estado.name() == 'EM_ANALISE'}" th:action="@{'/garantias/' + ${garantia.id} + '/aprovar'}" method="post">
+                                <button>Aprovar</button>
+                            </form>
+                            <form th:if="${garantia.estado.name() == 'EM_ANALISE'}" th:action="@{'/garantias/' + ${garantia.id} + '/rejeitar'}" method="post">
+                                <button>Rejeitar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <article class="card form-card">
+                <h2>Novo pedido</h2>
+                <form th:action="@{/garantias}" method="post">
+                    <label>Venda
+                        <select name="vendaId" required>
+                            <option value="">Selecionar venda</option>
+                            <option th:each="venda : ${vendas}" th:value="${venda.id}"
+                                    th:text="'#' + ${venda.id} + ' - ' + ${venda.cliente.nome}">Venda</option>
+                        </select>
+                    </label>
+                    <label>Motivo
+                        <textarea name="motivo" rows="5" required></textarea>
+                    </label>
+                    <button type="submit" class="primary-action">Registar pedido</button>
+                </form>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nordic Studio - Login</title>
+    <link rel="stylesheet" th:href="@{/css/web.css}">
+</head>
+<body class="login-page">
+<main class="login-shell">
+    <section class="login-brand">
+        <div class="brand-line">NORDIC STUDIO</div>
+        <div class="interior-scene">
+            <div class="lamp lamp-one"></div>
+            <div class="lamp lamp-two"></div>
+            <div class="vase big"></div>
+            <div class="vase small"></div>
+            <div class="bench"></div>
+        </div>
+    </section>
+    <section class="login-panel">
+        <form th:action="@{/login}" method="post" class="login-form">
+            <h1>Bem-vindo de volta</h1>
+            <p>Aceda à sua galeria de gestão personalizada.</p>
+            <label>
+                <span>E-mail ou utilizador</span>
+                <input type="text" name="utilizador" placeholder="exemplo@nordic.pt">
+            </label>
+            <label>
+                <span>Palavra-passe</span>
+                <input type="password" name="password" placeholder="********">
+            </label>
+            <label class="check-row">
+                <input type="checkbox">
+                <span>Manter sessão iniciada</span>
+            </label>
+            <button type="submit" class="primary-action">Entrar no sistema</button>
+            <small>Ainda não tem conta? Contacte o administrador.</small>
+        </form>
+    </section>
+</main>
+</body>
+</html>

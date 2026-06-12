@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard - Nordic Curator</title>
+    <link rel="stylesheet" th:href="@{/css/web.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">Nordic Curator<span>Inventory Management</span></div>
+        <nav>
+            <a th:classappend="${active == 'dashboard'} ? 'active'" th:href="@{/dashboard}">Dashboard</a>
+            <a th:classappend="${active == 'vendas'} ? 'active'" th:href="@{/vendas}">Registar venda</a>
+            <a th:classappend="${active == 'clientes'} ? 'active'" th:href="@{/clientes}">Clientes</a>
+            <a th:classappend="${active == 'produtos'} ? 'active'" th:href="@{/produtos}">Produtos e stock</a>
+            <a th:classappend="${active == 'garantias'} ? 'active'" th:href="@{/garantias}">Garantias</a>
+        </nav>
+        <a class="logout" th:href="@{/login}">Terminar sessão</a>
+    </aside>
+
+    <main class="content">
+        <header class="topbar">
+            <input type="search" placeholder="Pesquisar catálogo ou clientes...">
+            <span>Gestor</span>
+        </header>
+
+        <section class="page-title">
+            <h1>Visão geral do dia</h1>
+            <p>Resumo do inventário e desempenho comercial.</p>
+        </section>
+
+        <section class="cards-grid">
+            <article class="card hero-card">
+                <span class="tag">Performance atual</span>
+                <p>Total de vendas de hoje</p>
+                <strong th:text="${#numbers.formatDecimal(totalVendasHoje, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</strong>
+                <a th:href="@{/vendas}" class="dark-action">Registar venda</a>
+            </article>
+            <article class="card">
+                <p>Produtos registados</p>
+                <strong th:text="${totalProdutos}">0</strong>
+                <span class="muted">artigos ativos</span>
+            </article>
+            <article class="card warning">
+                <p>Produtos com stock baixo</p>
+                <strong th:text="${#lists.size(stockBaixo)}">0</strong>
+                <span class="muted">reposição recomendada</span>
+            </article>
+        </section>
+
+        <section class="split">
+            <article class="card table-card">
+                <div class="section-head">
+                    <h2>Últimas vendas realizadas</h2>
+                    <a th:href="@{/vendas}">Ver vendas</a>
+                </div>
+                <table>
+                    <thead>
+                    <tr><th>ID</th><th>Cliente</th><th>Data</th><th>Total</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="venda : ${ultimasVendas}">
+                        <td th:text="'#' + ${venda.id}">#1</td>
+                        <td th:text="${venda.cliente.nome}">Cliente</td>
+                        <td th:text="${#temporals.format(venda.dataVenda, 'dd/MM/yyyy HH:mm')}">data</td>
+                        <td th:text="${#numbers.formatDecimal(venda.total, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <article class="card table-card compact">
+                <h2>Stock baixo</h2>
+                <div class="stock-item" th:each="produto : ${stockBaixo}">
+                    <img class="thumb" th:src="@{${produto.imagemUrl}}" th:alt="${produto.nome}">
+                    <div>
+                        <strong th:text="${produto.nome}">Produto</strong>
+                        <small th:text="${produto.quantidadeStock} + ' unidades'">0 unidades</small>
+                    </div>
+                </div>
+                <p class="muted" th:if="${#lists.isEmpty(stockBaixo)}">Sem produtos em alerta.</p>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

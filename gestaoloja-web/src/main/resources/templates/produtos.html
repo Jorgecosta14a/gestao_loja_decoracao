@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Produtos e Stock</title>
+    <link rel="stylesheet" th:href="@{/css/web.css}">
+    <style>
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f0eb;
+        }
+
+        .danger-action,
+        .cancel-action {
+            width: 100%;
+            margin-top: 10px;
+            border: 0;
+            border-radius: 4px;
+            padding: 10px 15px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .danger-action {
+            background-color: #d9534f;
+        }
+
+        .danger-action:hover {
+            background-color: #c9302c;
+        }
+
+        .cancel-action {
+            background-color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">Nordic Curator<span>Gestão Premium</span></div>
+        <nav>
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/vendas}">Registar venda</a>
+            <a th:href="@{/clientes}">Clientes</a>
+            <a class="active" th:href="@{/produtos}">Produtos e stock</a>
+            <a th:href="@{/garantias}">Garantias</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <header class="topbar">
+            <form th:action="@{/produtos}" method="get" class="search-form">
+                <input type="search" name="pesquisa" th:value="${pesquisa}" placeholder="Procurar produto...">
+            </form>
+            <a th:href="@{/vendas}" class="dark-action">Nova venda</a>
+        </header>
+
+        <section class="page-title">
+            <span>Mobiliário / Inventário Ativo</span>
+            <h1>Produtos e Stock</h1>
+        </section>
+
+        <section class="cards-grid">
+            <article class="card"><p>Total de produtos</p><strong th:text="${totalProdutos}">0</strong></article>
+            <article class="card warm"><p>Unidades em stock</p><strong th:text="${totalStock}">0</strong></article>
+            <article class="card warning"><p>Stock baixo</p><strong th:text="${stockBaixo}">0</strong></article>
+        </section>
+
+        <section class="split">
+            <article class="card table-card">
+                <div class="section-head">
+                    <h2>Inventário disponível</h2>
+                    <span th:text="${#lists.size(produtos)} + ' produtos encontrados'">0 produtos</span>
+                </div>
+                <table>
+                    <thead>
+                    <tr><th>ID</th><th>Produto</th><th>Preço</th><th>Stock</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="produto : ${produtos}"
+                        style="cursor: pointer;"
+                        title="Clique para editar ou eliminar"
+                        th:data-id="${produto.id}"
+                        th:data-nome="${produto.nome}"
+                        th:data-desc="${produto.descricao}"
+                        th:data-preco="${produto.preco}"
+                        th:data-stock="${produto.quantidadeStock}"
+                        onclick="preencherFormulario(this)">
+                        <td th:text="'#' + ${produto.id}">#1</td>
+                        <td>
+                            <div class="product-cell">
+                                <img class="product-image" th:src="@{${produto.imagemUrl}}" th:alt="${produto.nome}">
+                                <div>
+                                    <strong th:text="${produto.nome}">Produto</strong>
+                                    <small th:text="${produto.descricao}">Descrição</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(produto.preco, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</td>
+                        <td><span class="pill" th:classappend="${produto.quantidadeStock <= 5} ? 'danger'" th:text="${produto.quantidadeStock} + ' un.'">0 un.</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <article class="card form-card">
+                <h2 id="form-title">Adicionar produto</h2>
+                <p class="ok" th:if="${mensagem}" th:text="${mensagem}"></p>
+                <p class="error" th:if="${erro}" th:text="${erro}"></p>
+
+                <form th:action="@{/produtos}" method="post">
+                    <input type="hidden" name="id_produto" value="0" id="id_produto">
+                    <label>Nome<input name="nome" id="input_nome" required></label>
+                    <label>Descrição<input name="descricao" id="input_descricao"></label>
+                    <label>Preço<input name="preco" id="input_preco" type="number" step="0.01" min="0" required></label>
+                    <label>Stock<input name="stock" id="input_stock" type="number" min="0" required></label>
+                    <button type="submit" id="btn_guardar" class="primary-action">Guardar produto</button>
+                    <button type="button" id="btn_cancelar" class="cancel-action" style="display:none;" onclick="limparFormulario()">Cancelar seleção</button>
+                </form>
+
+                <form id="form_eliminar" th:action="@{/produtos/eliminar}" method="post" style="display:none;">
+                    <input type="hidden" name="id_produto_eliminar" id="id_produto_eliminar" value="0">
+                    <button type="submit" class="danger-action" onclick="return confirm('Tem a certeza que deseja eliminar este produto? Esta ação não pode ser desfeita.');">Eliminar produto</button>
+                </form>
+            </article>
+        </section>
+    </main>
+</div>
+
+<script>
+    function preencherFormulario(linha) {
+        document.getElementById('id_produto').value = linha.getAttribute('data-id');
+        document.getElementById('id_produto_eliminar').value = linha.getAttribute('data-id');
+        document.getElementById('input_nome').value = linha.getAttribute('data-nome');
+        document.getElementById('input_descricao').value = linha.getAttribute('data-desc') || '';
+        document.getElementById('input_preco').value = linha.getAttribute('data-preco');
+        document.getElementById('input_stock').value = linha.getAttribute('data-stock');
+        document.getElementById('form-title').innerText = 'Atualizar produto';
+        document.getElementById('btn_guardar').innerText = 'Atualizar produto';
+        document.getElementById('btn_cancelar').style.display = 'block';
+        document.getElementById('form_eliminar').style.display = 'block';
+    }
+
+    function limparFormulario() {
+        document.getElementById('id_produto').value = '0';
+        document.getElementById('id_produto_eliminar').value = '0';
+        document.getElementById('input_nome').value = '';
+        document.getElementById('input_descricao').value = '';
+        document.getElementById('input_preco').value = '';
+        document.getElementById('input_stock').value = '';
+        document.getElementById('form-title').innerText = 'Adicionar produto';
+        document.getElementById('btn_guardar').innerText = 'Guardar produto';
+        document.getElementById('btn_cancelar').style.display = 'none';
+        document.getElementById('form_eliminar').style.display = 'none';
+    }
+</script>
+</body>
+</html>

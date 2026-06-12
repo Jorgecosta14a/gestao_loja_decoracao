@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registar Venda</title>
+    <link rel="stylesheet" th:href="@{/css/web.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="brand">Nordic Curator<span>Loja Principal</span></div>
+        <nav>
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a class="active" th:href="@{/vendas}">Registar venda</a>
+            <a th:href="@{/clientes}">Clientes</a>
+            <a th:href="@{/produtos}">Produtos e stock</a>
+            <a th:href="@{/garantias}">Garantias</a>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <section class="page-title">
+            <h1>Registar Venda</h1>
+            <p>Adicione os produtos à fatura e processe o pagamento apenas no final.</p>
+        </section>
+
+        <section class="split">
+            <article class="card form-card wide">
+                <h2>Adicionar produto</h2>
+                <p class="ok" th:if="${mensagem}" th:text="${mensagem}"></p>
+                <p class="error" th:if="${erro}" th:text="${erro}"></p>
+                <form th:action="@{/vendas/adicionar}" method="post" class="sale-form">
+                    <label>Produto
+                        <select name="produtoId" required>
+                            <option value="">Selecionar produto</option>
+                            <option th:each="produto : ${produtos}" th:value="${produto.id}"
+                                    th:text="${produto.nome} + ' - stock ' + ${produto.quantidadeStock}">Produto</option>
+                        </select>
+                    </label>
+                    <label>Quantidade<input name="quantidade" type="number" min="1" value="1" required></label>
+                    <button type="submit" class="primary-action">Adicionar à fatura</button>
+                </form>
+            </article>
+
+            <article class="card checkout-preview">
+                <h2>Fatura</h2>
+                <p th:if="${#lists.isEmpty(carrinho)}">Adicione produtos antes de processar o pagamento.</p>
+
+                <table class="invoice-table" th:if="${!#lists.isEmpty(carrinho)}">
+                    <tbody>
+                    <tr th:each="item : ${carrinho}">
+                        <td>
+                            <strong th:text="${item.nomeProduto}">Produto</strong>
+                            <small class="muted" th:text="${item.quantidade} + ' x ' + ${#numbers.formatDecimal(item.precoUnitario, 1, 'POINT', 2, 'COMMA')} + ' EUR'">1 x 0,00 EUR</small>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</td>
+                        <td>
+                            <form th:action="@{/vendas/remover}" method="post">
+                                <input type="hidden" name="produtoId" th:value="${item.produtoId}">
+                                <button type="submit">Remover</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <p class="invoice-total" th:if="${!#lists.isEmpty(carrinho)}">
+                    Total
+                    <strong th:text="${#numbers.formatDecimal(totalCarrinho, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</strong>
+                </p>
+
+                <div class="invoice-actions">
+                    <form th:if="${!#lists.isEmpty(carrinho)}" th:action="@{/vendas/finalizar}" method="post" class="sale-form">
+                        <label>Cliente
+                            <select name="clienteId">
+                                <option value="0">Venda ao balcão / sem cliente</option>
+                                <option th:each="cliente : ${clientes}" th:value="${cliente.id}" th:text="${cliente.nome}">Cliente</option>
+                            </select>
+                        </label>
+                        <button type="submit" class="primary-action">Processar pagamento</button>
+                    </form>
+
+                    <form th:if="${!#lists.isEmpty(carrinho)}" th:action="@{/vendas/limpar}" method="post">
+                        <button type="submit" class="dark-action">Limpar fatura</button>
+                    </form>
+
+                    <a th:href="@{/clientes}" class="light-link">Criar cliente</a>
+                    <a th:href="@{/produtos}" class="dark-action">Consultar stock</a>
+                </div>
+            </article>
+        </section>
+
+        <article class="card table-card">
+            <div class="section-head">
+                <h2>Histórico de vendas</h2>
+                <span th:text="${#lists.size(vendas)} + ' registos'">0 registos</span>
+            </div>
+            <table>
+                <thead>
+                <tr><th>ID</th><th>Cliente</th><th>Data</th><th>Produtos</th><th>Total</th><th>Ações</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="venda : ${vendas}">
+                    <td th:text="'#' + ${venda.id}">#1</td>
+                    <td th:text="${venda.cliente.nome}">Cliente</td>
+                    <td th:text="${#temporals.format(venda.dataVenda, 'dd/MM/yyyy HH:mm')}">data</td>
+                    <td>
+                        <span th:each="linha : ${venda.linhasVenda}" th:text="${linha.produto.nome} + ' x' + ${linha.quantidade}">Produto</span>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(venda.total, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</td>
+                    <td>
+                        <a class="table-action" th:href="@{/fatura/{id}(id=${venda.id})}" target="_blank" rel="noopener">Ver fatura</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </article>
+    </main>
+</div>
+</body>
+</html>
