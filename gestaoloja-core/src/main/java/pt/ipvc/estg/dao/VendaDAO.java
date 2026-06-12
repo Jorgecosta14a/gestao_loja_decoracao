@@ -1,7 +1,7 @@
-package dao;
+package pt.ipvc.estg.dao;
 
 import jakarta.persistence.EntityManager;
-import model.Venda;
+import pt.ipvc.estg.model.Venda;
 
 import java.time.LocalDateTime;
 import java.util.List;

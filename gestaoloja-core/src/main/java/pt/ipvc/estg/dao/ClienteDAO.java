@@ -1,7 +1,7 @@
-package dao;
+package pt.ipvc.estg.dao;
 
 import jakarta.persistence.EntityManager;
-import model.Cliente;
+import pt.ipvc.estg.model.Cliente;
 
 import java.util.List;
 

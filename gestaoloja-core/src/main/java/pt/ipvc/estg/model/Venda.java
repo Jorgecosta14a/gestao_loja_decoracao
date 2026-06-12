@@ -1,4 +1,4 @@
-package model;
+package pt.ipvc.estg.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -48,5 +48,18 @@ public class Venda {
     public void adicionarProduto(Produto produto, int quantidade) {
         LinhaVenda linha = new LinhaVenda(this, produto, quantidade, produto.getPreco());
         this.linhasVenda.add(linha);
+    }
+
+    @Transient
+    public double getTotal() {
+        return linhasVenda.stream()
+                .mapToDouble(linha -> linha.getQuantidade() * linha.getPrecoUnitario())
+                .sum();
+    }
+
+    @Override
+    public String toString() {
+        String clienteNome = cliente == null ? "Sem cliente" : cliente.getNome();
+        return "#" + id + " - " + clienteNome;
     }
 }

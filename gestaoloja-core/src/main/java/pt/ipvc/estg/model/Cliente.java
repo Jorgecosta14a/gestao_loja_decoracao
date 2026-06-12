@@ -1,4 +1,4 @@
-package model;
+package pt.ipvc.estg.model;
 
 import jakarta.persistence.*;
 
@@ -59,5 +59,13 @@ public class Cliente {
 
     public void setNif(String nif) {
         this.nif = nif;
+    }
+
+    @Override
+    public String toString() {
+        if (nif == null || nif.isBlank()) {
+            return nome;
+        }
+        return nome + " (" + nif + ")";
     }
 }

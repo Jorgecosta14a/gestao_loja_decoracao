@@ -1,4 +1,4 @@
-package model;
+package pt.ipvc.estg.model;
 
 public enum EstadoGarantia {
     EM_ANALISE("Em analise"),

@@ -1,8 +1,8 @@
-package dao;
+package pt.ipvc.estg.dao;
 
 import jakarta.persistence.EntityManager;
-import model.EstadoGarantia;
-import model.Garantia;
+import pt.ipvc.estg.model.EstadoGarantia;
+import pt.ipvc.estg.model.Garantia;
 
 import java.util.List;
 

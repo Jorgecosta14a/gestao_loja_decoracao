@@ -1,7 +1,7 @@
-package dao;
+package pt.ipvc.estg.dao;
 
 import jakarta.persistence.EntityManager;
-import model.Produto;
+import pt.ipvc.estg.model.Produto;
 
 import java.util.List;
 
@@ -63,6 +63,76 @@ public class ProdutoDAO {
             Produto atualizado = em.merge(produto);
             em.getTransaction().commit();
             return atualizado;
+        } catch (RuntimeException e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void removerProdutoSeSemVendas(int id) {
+        EntityManager em = JpaUtil.criarEntityManager();
+        try {
+            em.getTransaction().begin();
+            Produto produto = em.find(Produto.class, id);
+            if (produto == null) {
+                throw new IllegalArgumentException("Produto nao encontrado.");
+            }
+
+            Long totalLinhas = em.createQuery(
+                            "SELECT COUNT(l) FROM LinhaVenda l WHERE l.produto.id = :id",
+                            Long.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+
+            if (totalLinhas != null && totalLinhas > 0) {
+                throw new IllegalStateException("Nao e possivel eliminar este produto porque ja esta associado a uma venda.");
+            }
+
+            em.remove(produto);
+            em.getTransaction().commit();
+        } catch (RuntimeException e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public int removerDuplicadosPorNome(String nome) {
+        EntityManager em = JpaUtil.criarEntityManager();
+        try {
+            em.getTransaction().begin();
+            List<Produto> produtos = em.createQuery(
+                            "SELECT p FROM Produto p WHERE LOWER(p.nome) = LOWER(:nome) ORDER BY p.id",
+                            Produto.class)
+                    .setParameter("nome", nome)
+                    .getResultList();
+
+            if (produtos.size() <= 1) {
+                em.getTransaction().commit();
+                return 0;
+            }
+
+            Produto principal = produtos.get(0);
+            int removidos = 0;
+            for (int i = 1; i < produtos.size(); i++) {
+                Produto duplicado = produtos.get(i);
+                em.createQuery("UPDATE LinhaVenda l SET l.produto = :principal WHERE l.produto = :duplicado")
+                        .setParameter("principal", principal)
+                        .setParameter("duplicado", duplicado)
+                        .executeUpdate();
+                em.remove(duplicado);
+                removidos++;
+            }
+
+            em.getTransaction().commit();
+            return removidos;
         } catch (RuntimeException e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();

@@ -1,4 +1,4 @@
-package dao;
+package pt.ipvc.estg.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
