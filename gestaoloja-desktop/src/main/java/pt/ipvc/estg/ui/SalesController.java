@@ -128,6 +128,20 @@ public class SalesController {
         atualizarTotais();
     }
 
+    @FXML
+    private void removerItemCarrinho() {
+        ItemCarrinho itemSelecionado = carrinhoTable.getSelectionModel().getSelectedItem();
+        if (itemSelecionado == null) {
+            mensagemLabel.setText("Selecione um item do carrinho.");
+            return;
+        }
+
+        itensCarrinho.remove(itemSelecionado);
+        carrinhoTable.refresh();
+        mensagemLabel.setText("Item removido do carrinho.");
+        atualizarTotais();
+    }
+
     private ItemCarrinho procurarItem(Produto produto) {
         for (ItemCarrinho item : itensCarrinho) {
             if (item.getProduto().getId() == produto.getId()) {
@@ -138,11 +152,15 @@ public class SalesController {
     }
 
     private void atualizarTotais() {
-        double subtotal = itensCarrinho.stream().mapToDouble(ItemCarrinho::getSubtotal).sum();
-        double impostos = subtotal * 0.23;
-        subtotalLabel.setText(Formatador.moeda(subtotal));
+        double total = 0.0;
+        for (ItemCarrinho item : itensCarrinho) {
+            total += item.getPrecoUnitario() * item.getQuantidade();
+        }
+
+        double impostos = total * 0.23;
+        subtotalLabel.setText(Formatador.moeda(total));
         impostosLabel.setText(Formatador.moeda(impostos));
-        totalLabel.setText(Formatador.moeda(subtotal + impostos));
+        totalLabel.setText(Formatador.moeda(total));
     }
 
     @FXML

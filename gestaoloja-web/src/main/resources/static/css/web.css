@@ -405,6 +405,11 @@ td {
     font-weight: 700;
 }
 
+.invoice-table .danger-action {
+    background: var(--danger);
+    color: #ffffff;
+}
+
 .invoice-total {
     padding-top: 8px;
     border-top: 1px solid var(--line);

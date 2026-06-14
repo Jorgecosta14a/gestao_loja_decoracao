@@ -49,17 +49,19 @@
                 <p th:if="${#lists.isEmpty(carrinho)}">Adicione produtos antes de processar o pagamento.</p>
 
                 <table class="invoice-table" th:if="${!#lists.isEmpty(carrinho)}">
+                    <thead>
+                    <tr><th>Produto</th><th>Subtotal</th><th>Ações</th></tr>
+                    </thead>
                     <tbody>
-                    <tr th:each="item : ${carrinho}">
+                    <tr th:each="item, itemStatus : ${carrinho}">
                         <td>
                             <strong th:text="${item.nomeProduto}">Produto</strong>
                             <small class="muted" th:text="${item.quantidade} + ' x ' + ${#numbers.formatDecimal(item.precoUnitario, 1, 'POINT', 2, 'COMMA')} + ' EUR'">1 x 0,00 EUR</small>
                         </td>
                         <td th:text="${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</td>
                         <td>
-                            <form th:action="@{/vendas/remover}" method="post">
-                                <input type="hidden" name="produtoId" th:value="${item.produtoId}">
-                                <button type="submit">Remover</button>
+                            <form th:action="@{/vendas/remover/{index}(index=${itemStatus.index})}" method="post">
+                                <button type="submit" class="danger-action">Remover</button>
                             </form>
                         </td>
                     </tr>

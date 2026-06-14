@@ -68,6 +68,7 @@
                         <HBox alignment="CENTER_LEFT">
                             <Label styleClass="section-title" text="Carrinho da venda" />
                             <Region HBox.hgrow="ALWAYS" />
+                            <Button mnemonicParsing="false" onAction="#removerItemCarrinho" styleClass="light-action" text="Remover Item" />
                             <Button mnemonicParsing="false" onAction="#limparCarrinho" styleClass="light-action" text="Limpar" />
                         </HBox>
                         <TableView fx:id="carrinhoTable" prefHeight="340.0" styleClass="data-table">

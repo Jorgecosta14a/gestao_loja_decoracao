@@ -201,7 +201,7 @@ public class LojaWebController {
         model.addAttribute("produtos", lojaService.listarProdutos(null));
         model.addAttribute("vendas", lojaService.listarVendas());
         model.addAttribute("carrinho", carrinho);
-        model.addAttribute("totalCarrinho", lojaService.totalCarrinho(carrinho));
+        model.addAttribute("totalCarrinho", calcularTotalCarrinho(carrinho));
         return "vendas";
     }
 
@@ -225,6 +225,20 @@ public class LojaWebController {
                                       RedirectAttributes redirect) {
         lojaService.removerDoCarrinho(obterCarrinho(session), produtoId);
         redirect.addFlashAttribute("mensagem", "Produto removido da fatura.");
+        return "redirect:/vendas";
+    }
+
+    @PostMapping("/vendas/remover/{index}")
+    public String removerItemVenda(@PathVariable("index") int index,
+                                   HttpSession session,
+                                   RedirectAttributes redirect) {
+        List<CarrinhoVendaItem> carrinho = obterCarrinho(session);
+        if (index >= 0 && index < carrinho.size()) {
+            carrinho.remove(index);
+            redirect.addFlashAttribute("mensagem", "Produto removido da fatura.");
+        } else {
+            redirect.addFlashAttribute("erro", "Item da fatura nao encontrado.");
+        }
         return "redirect:/vendas";
     }
 
@@ -305,5 +319,13 @@ public class LojaWebController {
         List<CarrinhoVendaItem> novoCarrinho = new ArrayList<>();
         session.setAttribute(CARRINHO_VENDA, novoCarrinho);
         return novoCarrinho;
+    }
+
+    private double calcularTotalCarrinho(List<CarrinhoVendaItem> carrinho) {
+        double total = 0.0;
+        for (CarrinhoVendaItem item : carrinho) {
+            total += item.getPrecoUnitario() * item.getQuantidade();
+        }
+        return total;
     }
 }
