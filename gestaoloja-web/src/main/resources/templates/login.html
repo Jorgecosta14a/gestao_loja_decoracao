@@ -22,13 +22,14 @@
         <form th:action="@{/login}" method="post" class="login-form">
             <h1>Bem-vindo de volta</h1>
             <p>Aceda à sua galeria de gestão personalizada.</p>
+            <p class="error" th:if="${erro}" th:text="${erro}"></p>
             <label>
                 <span>E-mail ou utilizador</span>
-                <input type="text" name="utilizador" placeholder="exemplo@nordic.pt">
+                <input type="text" name="username" placeholder="admin" th:value="${username}" required>
             </label>
             <label>
                 <span>Palavra-passe</span>
-                <input type="password" name="password" placeholder="********">
+                <input type="password" name="password" placeholder="********" required>
             </label>
             <label class="check-row">
                 <input type="checkbox">

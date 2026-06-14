@@ -35,7 +35,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>web.GestaoLojaWebApplication</mainClass>
+                    <mainClass>pt.ipvc.estg.web.GestaoLojaWebApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

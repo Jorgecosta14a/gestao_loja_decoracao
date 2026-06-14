@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="760.0" prefWidth="1120.0" styleClass="login-root" stylesheets="@styles/app.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="pt.ipvc.estg.ui.LoginController">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="72.0" styleClass="top-brand">
+            <padding>
+                <Insets left="28.0" right="28.0" />
+            </padding>
+            <Label styleClass="brand-title" text="NORDIC STUDIO" />
+        </HBox>
+    </top>
+
+    <center>
+        <HBox styleClass="login-card">
+            <StackPane prefWidth="640.0" styleClass="login-visual">
+                <VBox alignment="BOTTOM_LEFT" spacing="12.0">
+                    <padding>
+                        <Insets bottom="38.0" left="42.0" right="42.0" top="42.0" />
+                    </padding>
+                    <Region prefHeight="260.0" styleClass="interior-panel" />
+                    <HBox alignment="BOTTOM_LEFT" spacing="18.0">
+                        <Region prefHeight="92.0" prefWidth="58.0" styleClass="vase-large" />
+                        <Region prefHeight="54.0" prefWidth="42.0" styleClass="vase-small" />
+                    </HBox>
+                    <Region prefHeight="88.0" styleClass="bench-panel" />
+                </VBox>
+            </StackPane>
+
+            <VBox alignment="CENTER_LEFT" prefWidth="430.0" spacing="18.0" styleClass="login-form">
+                <Label styleClass="login-title" text="Bem-vindo de volta" />
+                <Label styleClass="muted-text" text="Aceda a sua galeria de gestao personalizada." />
+
+                <VBox spacing="8.0">
+                    <Label styleClass="field-label" text="E-MAIL OU UTILIZADOR" />
+                    <TextField fx:id="usernameField" promptText="exemplo@nordic.pt" styleClass="form-input" />
+                </VBox>
+
+                <VBox spacing="8.0">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label styleClass="field-label" text="PALAVRA-PASSE" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Hyperlink styleClass="quiet-link" text="Esqueceu-se da palavra-passe?" />
+                    </HBox>
+                    <PasswordField fx:id="passwordField" promptText="********" styleClass="form-input" />
+                </VBox>
+
+                <CheckBox styleClass="remember-check" text="Manter sessao iniciada" />
+                <Label fx:id="errorLabel" styleClass="message-label" text="" wrapText="true" />
+                <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#enterApplication"
+                        styleClass="primary-button" text="ENTRAR NO SISTEMA  >" />
+                <HBox alignment="CENTER" maxWidth="Infinity" spacing="4.0">
+                    <Label styleClass="muted-small" text="Ainda nao tem conta?" />
+                    <Hyperlink styleClass="quiet-link" text="Contacte o Administrador" />
+                </HBox>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="760.0" prefWidth="1180.0" styleClass="app-root" stylesheets="@styles/app.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="pt.ipvc.estg.ui.SalesController">
+    <left>
+        <VBox prefWidth="230.0" spacing="22.0" styleClass="sidebar">
+            <padding>
+                <Insets bottom="24.0" left="24.0" right="24.0" top="28.0" />
+            </padding>
+            <Label styleClass="brand-title" text="NORDIC CURATOR" />
+            <VBox spacing="8.0">
+                <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#goDashboard" styleClass="nav-button" text="Painel" />
+                <Button maxWidth="Infinity" styleClass="nav-button-active" text="Registar Venda" />
+                <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#goClients" styleClass="nav-button" text="Clientes" />
+                <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#goProducts" styleClass="nav-button" text="Produtos e Stock" />
+                <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#goWarranties" styleClass="nav-button" text="Garantias" />
+            </VBox>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#logout" styleClass="danger-link-button" text="Terminar Sessao" />
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="page-scroll">
+            <VBox spacing="24.0" styleClass="page">
+                <padding>
+                    <Insets bottom="34.0" left="30.0" right="30.0" top="28.0" />
+                </padding>
+                <HBox alignment="CENTER_LEFT" spacing="24.0">
+                    <VBox spacing="8.0">
+                        <Label styleClass="page-title" text="Registar Venda" />
+                        <Label styleClass="muted-text" text="Selecione o cliente, os produtos e valide o stock antes do pagamento." />
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <TextField promptText="Pesquisar produto..." styleClass="search-field" />
+                </HBox>
+
+                <GridPane hgap="18.0" vgap="14.0" styleClass="table-card">
+                    <Label GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label" text="CLIENTE" />
+                    <Label GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="field-label" text="PRODUTO" />
+                    <Label GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="field-label" text="QUANTIDADE" />
+                    <ComboBox fx:id="clienteCombo" GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="250.0" styleClass="form-input" />
+                    <ComboBox fx:id="produtoCombo" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="310.0" styleClass="form-input" />
+                    <Spinner fx:id="quantidadeSpinner" GridPane.columnIndex="2" GridPane.rowIndex="1" prefWidth="120.0" />
+                    <Button GridPane.columnIndex="3" GridPane.rowIndex="1" mnemonicParsing="false" onAction="#adicionarAoCarrinho" styleClass="primary-button" text="Adicionar à Fatura" />
+                    <Button GridPane.columnIndex="0" GridPane.rowIndex="2" mnemonicParsing="false" onAction="#criarClienteRapido" styleClass="light-action" text="Criar Cliente" />
+                </GridPane>
+
+                <HBox spacing="22.0">
+                    <VBox spacing="18.0" styleClass="table-card" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label styleClass="section-title" text="Carrinho da venda" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button mnemonicParsing="false" onAction="#limparCarrinho" styleClass="light-action" text="Limpar" />
+                        </HBox>
+                        <TableView fx:id="carrinhoTable" prefHeight="340.0" styleClass="data-table">
+                            <columns>
+                                <TableColumn fx:id="colProduto" prefWidth="260.0" text="Produto" />
+                                <TableColumn fx:id="colQuantidade" prefWidth="110.0" text="Qtd." />
+                                <TableColumn fx:id="colPreco" prefWidth="130.0" text="Preco Unit." />
+                                <TableColumn fx:id="colSubtotal" prefWidth="130.0" text="Subtotal" />
+                            </columns>
+                        </TableView>
+                    </VBox>
+
+                    <VBox prefWidth="330.0" spacing="16.0" styleClass="checkout-panel">
+                        <Label styleClass="section-title" text="Venda Atual" />
+                        <VBox spacing="10.0" styleClass="customer-box">
+                            <Label styleClass="muted-small" text="CLIENTE SELECIONADO" />
+                            <Label fx:id="clienteSelecionadoLabel" styleClass="row-title-large" text="Sem cliente" />
+                        </VBox>
+                        <Region VBox.vgrow="ALWAYS" />
+                        <VBox spacing="10.0" styleClass="total-box">
+                            <HBox><Label text="Subtotal" /><Region HBox.hgrow="ALWAYS" /><Label fx:id="subtotalLabel" text="0,00 EUR" /></HBox>
+                            <HBox><Label text="Impostos estimados" /><Region HBox.hgrow="ALWAYS" /><Label fx:id="impostosLabel" text="0,00 EUR" /></HBox>
+                            <Separator />
+                            <HBox alignment="BASELINE_RIGHT">
+                                <Label styleClass="field-label" text="TOTAL A PAGAR" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label fx:id="totalLabel" styleClass="checkout-total" text="0,00 EUR" />
+                            </HBox>
+                            <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#processarVenda" styleClass="primary-button" text="Processar Pagamento" />
+                            <Label fx:id="mensagemLabel" styleClass="message-label" text="" wrapText="true" />
+                        </VBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

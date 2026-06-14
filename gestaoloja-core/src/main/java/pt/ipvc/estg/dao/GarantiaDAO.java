@@ -56,9 +56,10 @@ public class GarantiaDAO {
         try {
             em.getTransaction().begin();
             Garantia garantia = em.find(Garantia.class, id);
-            if (garantia != null) {
-                garantia.setEstado(estado);
+            if (garantia == null) {
+                throw new IllegalArgumentException("Garantia nao encontrada.");
             }
+            garantia.setEstado(estado);
             em.getTransaction().commit();
             return garantia;
         } catch (RuntimeException e) {

@@ -44,4 +44,22 @@ public class VendaDAO {
             em.close();
         }
     }
+
+    public List<Venda> buscarPorCliente(int clienteId) {
+        EntityManager em = JpaUtil.criarEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT DISTINCT v FROM Venda v " +
+                                    "JOIN FETCH v.cliente " +
+                                    "LEFT JOIN FETCH v.linhasVenda l " +
+                                    "LEFT JOIN FETCH l.produto " +
+                                    "WHERE v.cliente.id = :clienteId " +
+                                    "ORDER BY v.dataVenda DESC",
+                            Venda.class)
+                    .setParameter("clienteId", clienteId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

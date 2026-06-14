@@ -17,6 +17,7 @@
             <a th:href="@{/produtos}">Produtos e stock</a>
             <a th:href="@{/garantias}">Garantias</a>
         </nav>
+        <a class="logout" th:href="@{/logout}">Terminar Sessão</a>
     </aside>
 
     <main class="content">
@@ -70,23 +71,25 @@
                     <strong th:text="${#numbers.formatDecimal(totalCarrinho, 1, 'POINT', 2, 'COMMA')} + ' EUR'">0,00 EUR</strong>
                 </p>
 
-                <div class="invoice-actions">
-                    <form th:if="${!#lists.isEmpty(carrinho)}" th:action="@{/vendas/finalizar}" method="post" class="sale-form">
+                <div class="invoice-actions" style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                    <form th:if="${!#lists.isEmpty(carrinho)}" th:action="@{/vendas/finalizar}" method="post" class="sale-form" style="width: 100%;">
                         <label>Cliente
                             <select name="clienteId">
                                 <option value="0">Venda ao balcão / sem cliente</option>
                                 <option th:each="cliente : ${clientes}" th:value="${cliente.id}" th:text="${cliente.nome}">Cliente</option>
                             </select>
                         </label>
-                        <button type="submit" class="primary-action">Processar pagamento</button>
+                        <button type="submit" class="primary-action" style="width: 100%;">Processar pagamento</button>
                     </form>
 
-                    <form th:if="${!#lists.isEmpty(carrinho)}" th:action="@{/vendas/limpar}" method="post">
-                        <button type="submit" class="dark-action">Limpar fatura</button>
+                    <form th:if="${!#lists.isEmpty(carrinho)}" th:action="@{/vendas/limpar}" method="post" style="width: 100%;">
+                        <button type="submit" class="dark-action" style="width: 100%;">Limpar fatura</button>
                     </form>
 
-                    <a th:href="@{/clientes}" class="light-link">Criar cliente</a>
-                    <a th:href="@{/produtos}" class="dark-action">Consultar stock</a>
+                    <div style="display: flex; gap: 12px; width: 100%;">
+                        <a th:href="@{/clientes}" class="light-link" style="flex: 1; justify-content: center; margin: 0;">Criar cliente</a>
+                        <a th:href="@{/produtos}" class="dark-action" style="flex: 1;">Consultar stock</a>
+                    </div>
                 </div>
             </article>
         </section>

@@ -72,6 +72,7 @@
             <a th:href="@{/produtos}">Produtos e stock</a>
             <a th:href="@{/garantias}">Garantias</a>
         </nav>
+        <a class="logout" th:href="@{/logout}">Terminar Sessão</a>
     </aside>
 
     <main class="content">
@@ -103,8 +104,7 @@
                         style="cursor: pointer;"
                         title="Clique para editar, eliminar ou consultar compras"
                         th:classappend="${clienteSelecionado != null and clienteSelecionado.id == cliente.id} ? 'selected-row'"
-                        th:attr="data-url=@{/clientes(clienteId=${cliente.id})}"
-                        onclick="window.location=this.getAttribute('data-url')">
+                        th:onclick="|window.location='@{/clientes(clienteId=${cliente.id})}'|">
                         <td th:text="'#' + ${cliente.id}">#1</td>
                         <td>
                             <strong th:text="${cliente.nome}">Cliente</strong>

@@ -85,6 +85,13 @@ public class VendaService {
         return vendaDAO.buscarVendasDoDia();
     }
 
+    public List<Venda> listarVendasPorCliente(Cliente cliente) {
+        if (cliente == null || cliente.getId() <= 0) {
+            return List.of();
+        }
+        return vendaDAO.buscarPorCliente(cliente.getId());
+    }
+
     public double totalVendasDoDia() {
         return listarVendasDoDia().stream()
                 .mapToDouble(Venda::getTotal)

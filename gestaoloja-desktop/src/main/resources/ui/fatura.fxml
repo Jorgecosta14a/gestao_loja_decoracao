@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="640.0" prefWidth="820.0" styleClass="app-root" stylesheets="@styles/app.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="pt.ipvc.estg.ui.FaturaController">
+    <center>
+        <VBox spacing="24.0" styleClass="page">
+            <padding>
+                <Insets bottom="34.0" left="42.0" right="42.0" top="34.0" />
+            </padding>
+
+            <HBox alignment="TOP_LEFT" spacing="24.0" styleClass="table-card">
+                <VBox spacing="4.0">
+                    <Label styleClass="brand-title" text="NORDIC CURATOR" />
+                    <Label styleClass="muted-text" text="Loja Principal" />
+                    <Label styleClass="muted-small" text="Gestão de mobiliário e decoração" />
+                    <Label styleClass="muted-small" text="NIF: 999 999 990" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <VBox alignment="TOP_RIGHT" spacing="6.0">
+                    <Label fx:id="faturaIdLabel" styleClass="page-title" text="Fatura #0" />
+                    <Label fx:id="dataLabel" styleClass="muted-text" text="Data" />
+                </VBox>
+            </HBox>
+
+            <GridPane hgap="18.0" vgap="10.0" styleClass="metric-card">
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="section-title" text="Cliente" />
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label" text="NOME" />
+                <Label GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="field-label" text="CONTACTO" />
+                <Label GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="field-label" text="NIF" />
+                <Label fx:id="clienteNomeLabel" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="row-title-large" text="Cliente" />
+                <Label fx:id="clienteContactoLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="muted-text" text="-" />
+                <Label fx:id="clienteNifLabel" GridPane.columnIndex="2" GridPane.rowIndex="2" styleClass="muted-text" text="-" />
+            </GridPane>
+
+            <VBox spacing="14.0" styleClass="table-card" VBox.vgrow="ALWAYS">
+                <Label styleClass="section-title" text="Produtos" />
+                <TableView fx:id="itensTable" prefHeight="280.0" styleClass="data-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colProduto" prefWidth="330.0" text="Produto" />
+                        <TableColumn fx:id="colQuantidade" prefWidth="110.0" text="Qtd." />
+                        <TableColumn fx:id="colPrecoUnitario" prefWidth="140.0" text="Preço Unit." />
+                        <TableColumn fx:id="colSubtotal" prefWidth="140.0" text="Subtotal" />
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <HBox alignment="CENTER_RIGHT" spacing="18.0" styleClass="total-box">
+                <Label styleClass="field-label" text="TOTAL" />
+                <Label fx:id="totalLabel" styleClass="checkout-total" text="0,00 EUR" />
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

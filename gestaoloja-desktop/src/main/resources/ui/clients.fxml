@@ -33,7 +33,6 @@
                 <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#goWarranties" styleClass="nav-button" text="Garantias" />
             </VBox>
             <Region VBox.vgrow="ALWAYS" />
-            <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#adicionarCliente" styleClass="primary-button" text="+ Guardar Cliente" />
             <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#logout" styleClass="danger-link-button" text="Terminar Sessao" />
         </VBox>
     </left>
@@ -52,7 +51,7 @@
                     </VBox>
                     <Region HBox.hgrow="ALWAYS" />
                     <TextField fx:id="pesquisaField" promptText="Pesquisar cliente..." styleClass="search-field" />
-                    <Button mnemonicParsing="false" onAction="#adicionarCliente" styleClass="dark-button-large" text="+ Novo Cliente" />
+                    <Button mnemonicParsing="false" onAction="#adicionarCliente" styleClass="dark-button-large" text="Novo Cliente" />
                 </HBox>
 
                 <GridPane hgap="22.0" vgap="22.0">
@@ -83,14 +82,24 @@
                         </TableView>
                     </VBox>
 
-                    <VBox prefWidth="320.0" spacing="14.0" styleClass="table-card">
-                        <Label styleClass="section-title" text="Novo cliente" />
+                    <VBox prefWidth="360.0" spacing="14.0" styleClass="table-card">
+                        <Label fx:id="formTitleLabel" styleClass="section-title" text="Novo cliente" />
                         <Label styleClass="muted-small" text="O NIF e opcional para clientes simples de loja." wrapText="true" />
                         <TextField fx:id="nomeField" promptText="Nome do cliente" styleClass="form-input" />
                         <TextField fx:id="contactoField" promptText="Contacto" styleClass="form-input" />
                         <TextField fx:id="nifField" promptText="NIF" styleClass="form-input" />
                         <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#adicionarCliente" styleClass="primary-button" text="Guardar Cliente" />
                         <Label fx:id="mensagemLabel" styleClass="message-label" text="" wrapText="true" />
+                        <VBox spacing="10.0">
+                            <Label styleClass="section-title" text="Histórico de Compras" />
+                            <TableView fx:id="historicoComprasTable" prefHeight="190.0" styleClass="data-table">
+                                <columns>
+                                    <TableColumn fx:id="colHistoricoId" prefWidth="70.0" text="ID" />
+                                    <TableColumn fx:id="colHistoricoData" prefWidth="145.0" text="Data" />
+                                    <TableColumn fx:id="colHistoricoTotal" prefWidth="105.0" text="Total" />
+                                </columns>
+                            </TableView>
+                        </VBox>
                     </VBox>
                 </HBox>
             </VBox>

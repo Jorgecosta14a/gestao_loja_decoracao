@@ -50,6 +50,7 @@
             <a class="active" th:href="@{/produtos}">Produtos e stock</a>
             <a th:href="@{/garantias}">Garantias</a>
         </nav>
+        <a class="logout" th:href="@{/logout}">Terminar Sessão</a>
     </aside>
 
     <main class="content">
@@ -113,12 +114,13 @@
                 <p class="ok" th:if="${mensagem}" th:text="${mensagem}"></p>
                 <p class="error" th:if="${erro}" th:text="${erro}"></p>
 
-                <form th:action="@{/produtos}" method="post">
+                <form th:action="@{/produtos}" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="id_produto" value="0" id="id_produto">
                     <label>Nome<input name="nome" id="input_nome" required></label>
                     <label>Descrição<input name="descricao" id="input_descricao"></label>
                     <label>Preço<input name="preco" id="input_preco" type="number" step="0.01" min="0" required></label>
                     <label>Stock<input name="stock" id="input_stock" type="number" min="0" required></label>
+                    <label>Imagem<input name="imageFile" type="file" accept="image/*"></label>
                     <button type="submit" id="btn_guardar" class="primary-action">Guardar produto</button>
                     <button type="button" id="btn_cancelar" class="cancel-action" style="display:none;" onclick="limparFormulario()">Cancelar seleção</button>
                 </form>
