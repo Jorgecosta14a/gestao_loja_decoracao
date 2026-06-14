@@ -1,76 +1,81 @@
-GestaoLojaDecoracao
+# GestãoLojaDecoração (Nordic Curator)
 
-Aplicacao Java para apoio a gestao de uma loja de moveis e artigos de decoracao.
+Aplicação Java multiplataforma desenvolvida para apoio à gestão de uma loja de móveis e artigos de decoração. O sistema centraliza as regras de negócio e a base de dados, oferecendo duas interfaces de acesso distintas (Desktop e Web).
 
-Estado atual
+---
 
-JavaFX/FXML para a aplicacao desktop.
-Spring Boot/Thymeleaf para a aplicacao Web.
-SceneBuilder pode abrir os ficheiros em src/main/resources.
-JPA/Hibernate com PostgreSQL para persistencia.
-Camadas separadas em model, dao, bll, ui e web.
+##  Estado Atual e Arquitetura
 
-Funcionalidades ja ligadas
+* **Interface Desktop:** JavaFX/FXML estruturado para edição no SceneBuilder.
+* **Interface Web:** Spring Boot com motor de templates Thymeleaf.
+* **Persistência:** JPA/Hibernate com base de dados PostgreSQL.
+* **Arquitetura:** Camadas separadas em `model`, `dao`, `bll`, `ui` (Desktop) e `web` (Spring).
 
-Login de entrada para a aplicacao nas duas versoes.
-Dashboard com vendas, produtos e stock baixo.
-Gestao de clientes com historico de compras.
-Gestao de produtos e stock com suporte a upload de imagens na versao Web.
-Registo de venda com validacao de stock, opcao de venda ao balcao e remocao individual de itens no carrinho com recalculo imediato.
-Registo, aprovacao, rejeicao e atualizacao de pedidos de garantia.
-Versao Web e Desktop com interface limpa e otimizada.
-API REST com endpoints JSON para clientes, produtos, vendas, garantias e dashboard.
+---
 
-Como correr
+##  Funcionalidades 
 
-Base de dados esperada:
-PostgreSQL em localhost:5432
-Base de dados: ProjII
-Utilizador: postgres
+A aplicação encontra-se totalmente funcional e com a interface otimizada nas duas plataformas:
 
-Aplicacao Desktop
+* **Segurança:** Login de entrada obrigatório para acesso à aplicação.
+* **Dashboard:** Visão geral diária com métricas de vendas, total de produtos e alertas de stock baixo.
+* **Gestão de Clientes:** Registo de clientes com histórico de compras integrado.
+* **Gestão de Produtos e Stock:** Catálogo completo de artigos (com **suporte a upload de imagens** na versão Web).
+* **Ponto de Venda (POS):** Registo de faturas com validação de stock, opção de "venda ao balcão" e **remoção individual de itens no carrinho com recálculo instantâneo**.
+* **Pós-Venda:** Registo, triagem e atualização de estados de pedidos de garantia.
+* **API REST:** Endpoints JSON disponíveis para integração de serviços externos.
 
-No IntelliJ, correr a classe:
-ui.AppMain
+---
 
-Tambem pode correr por Maven:
-mvn javafx:run
+## Como Correr o Projeto
 
-Aplicacao Web
+### 1. Requisitos da Base de Dados
+Certifique-se de que o servidor PostgreSQL está a correr com as seguintes credenciais:
+* **Host:** `localhost:5432`
+* **Base de dados:** `ProjII`
+* **Utilizador:** `postgres`
 
-No IntelliJ, correr a classe:
-web.GestaoLojaWebApplication
+### 2. Aplicação Desktop (JavaFX)
+Para contornar restrições de módulos do JavaFX, utilize a classe `AppMain` (Wrapper) ou o Maven.
+* **No IntelliJ:** Correr a classe `pt.ipvc.estg.ui.AppMain`
+* **Via Maven (Terminal):** `mvn javafx:run`
 
-Depois abrir:
-http://localhost:8080
+### 3. Aplicação Web (Spring Boot)
+* **No IntelliJ:** Correr a classe principal `web.GestaoLojaWebApplication`
+* **Acesso:** Abrir o navegador em [http://localhost:8080](http://localhost:8080) *(Utilizar as credenciais padrão configuradas no controlador de Login)*.
 
-Ecras FXML
+---
 
-src/main/resources/Login.fxml
-src/main/resources/ui/dashboard.fxml
-src/main/resources/ui/sales.fxml
-src/main/resources/ui/clients.fxml
-src/main/resources/ui/products.fxml
-src/main/resources/ui/warranties.fxml
+## Estrutura de Ecrãs e Rotas
 
-Paginas Web
+### Ecrãs FXML (Desktop)
+Localizados em `src/main/resources/`:
+* `Login.fxml`
+* `ui/dashboard.fxml`
+* `ui/sales.fxml`
+* `ui/clients.fxml`
+* `ui/products.fxml`
+* `ui/warranties.fxml`
 
-/login
-/dashboard
-/clientes
-/produtos
-/vendas
-/garantias
+### Páginas Web (Spring/Thymeleaf)
+* `/login`
+* `/dashboard`
+* `/clientes`
+* `/produtos`
+* `/vendas`
+* `/garantias`
 
-API REST
+---
 
-GET /api/dashboard
-GET /api/clientes
-POST /api/clientes
-GET /api/produtos
-POST /api/produtos
-GET /api/vendas
-POST /api/vendas
-GET /api/garantias
-POST /api/garantias
-PATCH /api/garantias/{id}/estado
+## API REST
+O sistema disponibiliza os seguintes *endpoints*:
+
+**Estatísticas e Entidades Principais:**
+* `GET /api/dashboard`
+* `GET /api/clientes` | `POST /api/clientes`
+* `GET /api/produtos` | `POST /api/produtos`
+
+**Vendas e Pós-Venda:**
+* `GET /api/vendas` | `POST /api/vendas`
+* `GET /api/garantias` | `POST /api/garantias`
+* `PATCH /api/garantias/{id}/estado`
